@@ -1,27 +1,36 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // 1. GENERATE THE HEATMAP GRID
     const grid = document.getElementById('activityGrid');
-    
-    // Create 28 days (4 weeks) for the heatmap
-    for (let i = 0; i < 28; i++) {
-        const box = document.createElement('div');
-        box.classList.add('day-box');
-        
-        // Simulate random question activity
-        const weight = Math.random();
-        
-        if (weight > 0.8) {
-            box.classList.add('lvl-3'); // Busy day (8+ questions)
-        } else if (weight > 0.5) {
-            box.classList.add('lvl-2'); // Normal day (4-7 questions)
-        } else if (weight > 0.2) {
-            box.classList.add('lvl-1'); // Light day (1-3 questions)
+    if (grid) {
+        // Create 84 boxes (12 weeks * 7 days)
+        for (let i = 0; i < 84; i++) {
+            const day = document.createElement('div');
+            // Randomly assign a brightness level for the "hackathon" look
+            const level = Math.floor(Math.random() * 4); 
+            day.className = `w-3 h-3 rounded-sm transition-colors duration-500 bg-slate-800`;
+            
+            // Apply colors based on level
+            if (level === 1) day.style.backgroundColor = '#1e3a8a';
+            if (level === 2) day.style.backgroundColor = '#2563eb';
+            if (level === 3) {
+                day.style.backgroundColor = '#60a5fa';
+                day.style.boxShadow = '0 0 8px rgba(96, 165, 250, 0.4)';
+            }
+            
+            grid.appendChild(day);
         }
+    }
+
+    // 2. LOAD SHARED DATA FROM LOCALSTORAGE
+    const userData = JSON.parse(localStorage.getItem("userData"));
+    if (userData) {
+        if (document.getElementById("solvedCount")) 
+            document.getElementById("solvedCount").innerText = userData.totalSolved;
         
-        grid.appendChild(box);
+        if (document.getElementById("xpDisplay")) 
+            document.getElementById("xpDisplay").innerText = (userData.level * 100) + userData.xp;
+            
+        if (document.getElementById("levelBadge")) 
+            document.getElementById("levelBadge").innerText = `Level ${userData.level}`;
     }
 });
-
-// Icon Refresh for Lucide
-if (window.lucide) {
-    lucide.createIcons();
-}
